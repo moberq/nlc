@@ -96,6 +96,6 @@ def get_tokenizer(flags):
   elif flags.tokenizer.lower() == 'word':
     return nlc_data.basic_tokenizer
   else:
-    raise
+    raise ValueError("Invalid tokenizer.")
   return tokenizer
 

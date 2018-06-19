@@ -47,10 +47,9 @@ tf.app.flags.DEFINE_integer("epochs", 40, "Number of epochs to train.")
 tf.app.flags.DEFINE_integer("size", 400, "Size of each model layer.")
 tf.app.flags.DEFINE_integer("num_layers", 3, "Number of layers in the model.")
 tf.app.flags.DEFINE_integer("max_vocab_size", 40000, "Vocabulary size limit.")
-#tf.app.flags.DEFINE_integer("max_seq_len", 200, "Maximum sequence length.")
 tf.app.flags.DEFINE_integer("max_seq_len", 100, "Maximum sequence length.")
-tf.app.flags.DEFINE_string("data_dir", "/tmp", "Data directory")
-tf.app.flags.DEFINE_string("train_dir", "/tmp", "Training directory.")
+tf.app.flags.DEFINE_string("data_dir", "./data", "Data directory")
+tf.app.flags.DEFINE_string("train_dir", "./output", "Training directory.")
 tf.app.flags.DEFINE_string("tokenizer", "CHAR", "BPE / CHAR / WORD.")
 tf.app.flags.DEFINE_string("optimizer", "adam", "adam / sgd")
 tf.app.flags.DEFINE_integer("print_every", 1, "How many iterations to do per print.")
@@ -68,7 +67,7 @@ def create_model(session, vocab_size, forward_only):
     model.saver.restore(session, ckpt.model_checkpoint_path)
   else:
     logging.info("Created model with fresh parameters.")
-    session.run(tf.initialize_all_variables())
+    session.run(tf.global_variables_initializer())
     logging.info('Num params: %d' % sum(v.get_shape().num_elements() for v in tf.trainable_variables()))
   return model
 
@@ -104,7 +103,9 @@ def train():
   with open(os.path.join(FLAGS.train_dir, "flags.json"), 'w') as fout:
     json.dump(FLAGS.__flags, fout)
 
-  with tf.Session() as sess:
+  config = tf.ConfigProto()
+  config.gpu_options.allow_growth = True
+  with tf.Session(config=config) as sess:
     logging.info("Creating %d layers of %d units." % (FLAGS.num_layers, FLAGS.size))
     model = create_model(sess, vocab_size, False)
 

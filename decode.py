@@ -44,12 +44,12 @@ tf.app.flags.DEFINE_integer("epochs", 0, "Number of epochs to train.")
 tf.app.flags.DEFINE_integer("size", 400, "Size of each model layer.")
 tf.app.flags.DEFINE_integer("num_layers", 3, "Number of layers in the model.")
 tf.app.flags.DEFINE_integer("max_vocab_size", 40000, "Vocabulary size limit.")
-tf.app.flags.DEFINE_integer("max_seq_len", 200, "Maximum sequence length.")
-tf.app.flags.DEFINE_string("data_dir", "/tmp", "Data directory")
-tf.app.flags.DEFINE_string("train_dir", "/tmp", "Training directory.")
+tf.app.flags.DEFINE_integer("max_seq_len", 100, "Maximum sequence length.")
+tf.app.flags.DEFINE_string("data_dir", "./data", "Data directory")
+tf.app.flags.DEFINE_string("train_dir", "./output", "Training directory.")
 tf.app.flags.DEFINE_string("tokenizer", "CHAR", "Set to WORD to train word level model.")
 tf.app.flags.DEFINE_integer("beam_size", 8, "Size of beam.")
-tf.app.flags.DEFINE_string("lmfile", None, "arpa file of the language model.")
+tf.app.flags.DEFINE_string("lmfile", "./lm/n-gram.ARPA", "arpa file of the language model.")
 tf.app.flags.DEFINE_float("alpha", 0.3, "Language model relative weight.")
 
 FLAGS = tf.app.flags.FLAGS
@@ -62,12 +62,16 @@ def create_model(session, vocab_size, forward_only):
       FLAGS.learning_rate, FLAGS.learning_rate_decay_factor, FLAGS.dropout,
       forward_only=forward_only)
   ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
-  if ckpt and tf.gfile.Exists(ckpt.model_checkpoint_path):
-    print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
-    model.saver.restore(session, ckpt.model_checkpoint_path)
-  else:
-    print("Created model with fresh parameters.")
-    session.run(tf.initialize_all_variables())
+  print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
+  model.saver.restore(session, ckpt.model_checkpoint_path)
+  
+#  if ckpt and tf.gfile.Exists(ckpt.model_checkpoint_path):
+#    print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
+#    model.saver.restore(session, ckpt.model_checkpoint_path)
+#  else:
+#    print("Created model with fresh parameters.")
+#    session.run(tf.initialize_all_variables())
+  
   return model
 
 
@@ -156,7 +160,9 @@ def decode():
   vocab_size = len(vocab)
   print("Vocabulary size: %d" % vocab_size)
 
-  with tf.Session() as sess:
+  config = tf.ConfigProto()
+  config.gpu_options.allow_growth = True
+  with tf.Session(config=config) as sess:
     print("Creating %d layers of %d units." % (FLAGS.num_layers, FLAGS.size))
     model = create_model(sess, vocab_size, False)
 

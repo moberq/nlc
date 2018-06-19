@@ -114,7 +114,7 @@ class NLCModel(object):
       self.updates = opt.apply_gradients(
         zip(clipped_gradients, params), global_step=self.global_step)
 
-    self.saver = tf.train.Saver(tf.all_variables(), max_to_keep=0)
+    self.saver = tf.train.Saver(tf.global_variables(), max_to_keep=0)
 
   def setup_embeddings(self):
     with vs.variable_scope("embeddings"):
@@ -125,7 +125,7 @@ class NLCModel(object):
 
   def setup_encoder(self):
     self.encoder_cell = rnn_cell.GRUCell(self.size)
-    with vs.variable_scope("PryamidEncoder"):
+    with vs.variable_scope("PyramidEncoder"):
       inp = self.encoder_inputs
       mask = self.source_mask
       out = None
