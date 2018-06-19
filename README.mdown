@@ -14,7 +14,7 @@ Implementation of Neural Language Correction ([corresponding paper](http://arxiv
 
 [datasets download link](https://pan.baidu.com/s/1C-YyN0QYY9utXUN7arzhkA)
 
-*training set: 1,987,139 pairs, validation set: 496,785 pairs.*
+*P.S. training set: 1,987,139 pairs, validation set: 496,785 pairs.*
 
 ## Pretrained TensorFlow Model
 
