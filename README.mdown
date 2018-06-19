@@ -12,10 +12,10 @@ Implementation of Neural Language Correction ([corresponding paper](http://arxiv
 
 ## Parallel data (for training && evaluation) crawled from lang-8
 
+[datasets download link](https://pan.baidu.com/s/1C-YyN0QYY9utXUN7arzhkA)
+
 * Training set: 1,987,139 pairs
 * Validation set: 496,785 pairs
-
-[datasets download link](https://pan.baidu.com/s/1C-YyN0QYY9utXUN7arzhkA)
 
 ## Pretrained TensorFlow Model
 
